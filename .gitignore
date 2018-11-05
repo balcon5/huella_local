@@ -1,0 +1,9 @@
+/.idea
+/.vs
+node_modules
+dist
+
+
+#Proyecto
+
+src/node_modules
