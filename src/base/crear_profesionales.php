@@ -1,3 +1,13 @@
+<?php
+// Conectando, seleccionando la base de datos
+$link = mysqli_connect('localhost', 'root', '')
+    or die('No se pudo conectar: ' . mysqli_error());
+mysqli_select_db($link,'huella_local') or die('No se pudo seleccionar la base de datos');
+
+$query = 'SELECT * FROM proyectos';
+$result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error());
+
+?>
 <div class="animated fadeIn">
 	<div class="row">
 
@@ -42,6 +52,15 @@
 							</div>
 						</div>
 
+            <div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="name">Sueldo</label>
+									<input class="form-control" id="sueldo" type="text" placeholder="Introduce sueldo">
+								</div>
+							</div>
+						</div>
+
 					</div>
 
 					<div class="row-separador">
@@ -58,26 +77,46 @@
                         <label for="ccmonth">Proyectos</label>
                         <select class="form-control" id="proyectos">
                           <option value="0">Seleccione un proyecto</option>
-                          <option value="2" >2</option>
-                          <option value="3" >3</option>
-                          <option value="4" >4</option>
-                          <option value="5" >5</option>
-                          <option value="6" >6</option>
+                          <?php
+                          while($proyecto = mysqli_fetch_assoc ( $result )){
+                            
+                          ?>
+                          <option value="<?=$proyecto['codigo']?>" ><?=$proyecto['codigo']?> <?=$proyecto['nombre']?></option>
+                          <?php
+                          }
+                          ?>
+
+                          
                         </select>
               </div>
               <div class="form-group col-sm-3">
                         <label for="ccmonth">Pocentaje</label>
                         <select class="form-control" id="pocentajes">
                           <option value="0">Seleccione un porcentaje</option>
-                          <option value="5%" >5%</option>
-                          <option value="10%" >10%</option>
-                          <option value="15%" >15%</option>
-                          <option value="20%" >20%</option>
-                          <option value="25%" >25%</option>
+                          <option value="5" >5%</option>
+                          <option value="10" >10%</option>
+                          <option value="15" >15%</option>
+                          <option value="20" >20%</option>
+                          <option value="25" >25%</option>
+                          <option value="30" >30%</option>
+                          <option value="35" >35%</option>
+                          <option value="40" >40%</option>
+                          <option value="45" >45%</option>
+                          <option value="50" >50%</option>
+                          <option value="55" >55%</option>
+                          <option value="60" >60%</option>
+                          <option value="65" >65%</option>
+                          <option value="70" >70%</option>
+                          <option value="75" >75%</option>
+                          <option value="80" >80%</option>
+                          <option value="85" >85%</option>
+                          <option value="90" >90%</option>
+                          <option value="95" >95%</option>
+                          <option value="100" >100%</option>
                         </select>
               </div>
               <div class="form-group col-sm-2">
-              <label for="ccmonth"></label>
+              <label for="ccmonth">,</label>
               <button class="btn btn-block btn-success" type="button" onClick="seleccionarProyecto()">Agregar</button>
               </div>
 						</div>
@@ -86,14 +125,23 @@
             <table class="table table-responsive-sm table-striped">
                       <thead>
                         <tr>
-                          <th>Proyecto</th>
                           <th>Código</th>
+                          <th>Proyecto</th>
                           <th>Porcentaje</th>
+                          <th>Porcentaje sueldo</th>
                         </tr>
                       </thead>
                       <tbody id="bodyTable">
                         
                       </tbody>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                          <th style="text-align:right;">Total</th>
+                          <th id="sueldoTotal"></th>
+                        </tr>
+                      </thead>
                     </table>
             
 
@@ -128,15 +176,20 @@
 </div>
 <script>
   var proyectosSelec = [];
+  var sueldoTotal = 0 ;
+  var suelAnt = 0;
   var ant='bodyTable'
   function seleccionarProyecto(){
 
     var e = document.getElementById('proyectos');
     var idProy = e.options[e.selectedIndex].value;
+    var proy = e.options[e.selectedIndex].text;
     var f = document.getElementById('pocentajes');
+    var sueldo = document.getElementById('sueldo').value;
+    var tdSueldoTotal= document.getElementById('sueldoTotal');
     var porcent = f.options[f.selectedIndex].value;
-
-    console.log('proyecto', idProy);
+    var lenProy = idProy.split('-');
+    var numVerf = lenProy[2];
 
     var verf = true;
     for(var i = 0;  i < proyectosSelec.length; i++){
@@ -146,11 +199,17 @@
         }
 
     }
-    if ( verf == true && idProy != 0 && porcent !== 0 ) {
+    
     var proyecto = new Object();
     proyecto.id = idProy;
-    proyecto.nombre = 'Proyecto Topulen';
-    proyecto.porcentaje = porcent; 
+    proyecto.nombre = proy;
+    proyecto.porcentaje = porcent;
+    proyecto.sueldo = sueldo * porcent / 100;
+    sueldoTotal = sueldoTotal + proyecto.sueldo;
+    suelAnt =  sueldo * porcent / 100;
+    console.log('sueldoTotal::', sueldoTotal, 'sueldo::', sueldo);
+
+    if ( verf == true && idProy != 0 && porcent != 0 && numVerf != 0 && sueldo >= sueldoTotal ) {  
     proyectosSelec.push(proyecto);
 
     var tr = document.createElement('tr');
@@ -161,8 +220,12 @@
 
     console.log('proyectos', proyectosSelec);
 
+    var td4 = document.createElement('td');
+    var contenido4 = document.createTextNode(proyecto.sueldo);
+    td4.appendChild(contenido4);
+
     var td3 = document.createElement('td');
-    var contenido3 = document.createTextNode(proyecto.porcentaje);
+    var contenido3 = document.createTextNode(proyecto.porcentaje + '%');
     td3.appendChild(contenido3);
     
     var td2 = document.createElement('td');
@@ -175,9 +238,15 @@
     
 
     var trContenedor = document.getElementById('tr'+ idProy);
+    var contenido5 = document.createTextNode(sueldoTotal);
     trContenedor.appendChild(td1);
     trContenedor.appendChild(td2);
     trContenedor.appendChild(td3);
+    trContenedor.appendChild(td4);
+    tdSueldoTotal.innerHTML = sueldoTotal;
+
+    }else{
+      sueldoTotal = sueldoTotal - suelAnt;
     }
 
 
