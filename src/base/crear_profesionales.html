@@ -53,7 +53,11 @@
       // Bootstrap ID
       gtag('config', 'UA-118965717-5');
     </script>
-    
+    <style>
+      .alert{
+        margin-bottom: 0 !important;
+      }
+    </style>
   </head>
   <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
     <header class="app-header navbar">
@@ -339,7 +343,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="name">Horas semanales</label>
-									<input class="form-control" id="sueldo" type="text" placeholder="Introduce horas">
+									<input class="form-control" id="horas" type="text" placeholder="Introduce horas">
 								</div>
               </div>
               <div class="col-sm-6">
@@ -366,6 +370,13 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
                         <label for="ccmonth">Proyectos</label>
                         <select class="form-control" id="proyectos">
                           <option value="0">Seleccione un proyecto</option>
+                          <option value="100-00-01">Proyecto de prueba</option>
+                          <option value="100-00-02">Proyecto de prueba2</option>
+                          <option value="100-00-03">Proyecto de prueba3</option>
+                          <option value="100-00-04">Proyecto de prueba4</option>
+                          <option value="100-00-05">Proyecto de prueba5</option>
+                          <option value="100-00-06">Proyecto de prueba6</option>
+                          <option value="100-00-07">Proyecto de prueba7</option>
                           <!-- <?php
                           while($proyecto = mysqli_fetch_assoc ( $result )){
                             
@@ -379,29 +390,50 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
                         </select>
               </div>
               <div class="form-group col-sm-3">
-                        <label for="ccmonth">Pocentaje</label>
+                        <label for="ccmonth">horas a la semana</label>
                         <select class="form-control" id="pocentajes">
-                          <option value="0">Seleccione un porcentaje</option>
-                          <option value="5" >5%</option>
-                          <option value="10" >10%</option>
-                          <option value="15" >15%</option>
-                          <option value="20" >20%</option>
-                          <option value="25" >25%</option>
-                          <option value="30" >30%</option>
-                          <option value="35" >35%</option>
-                          <option value="40" >40%</option>
-                          <option value="45" >45%</option>
-                          <option value="50" >50%</option>
-                          <option value="55" >55%</option>
-                          <option value="60" >60%</option>
-                          <option value="65" >65%</option>
-                          <option value="70" >70%</option>
-                          <option value="75" >75%</option>
-                          <option value="80" >80%</option>
-                          <option value="85" >85%</option>
-                          <option value="90" >90%</option>
-                          <option value="95" >95%</option>
-                          <option value="100" >100%</option>
+                          <option value="0">Seleccione horas</option>
+                          <option value="1" >1 hr</option>
+                          <option value="2" >2 hrs</option>
+                          <option value="3" >3 hrs</option>
+                          <option value="4" >4 hrs</option>
+                          <option value="5" >5 hrs</option>
+                          <option value="6" >6 hrs</option>
+                          <option value="7" >7 hrs</option>
+                          <option value="8" >8 hrs</option>
+                          <option value="9" >9 hrs</option>
+                          <option value="10" >10 hrs</option>
+                          <option value="11" >11 hrs</option>
+                          <option value="12" >12 hrs</option>
+                          <option value="13" >13 hrs</option>
+                          <option value="14" >14 hrs</option>
+                          <option value="15" >15 hrs</option>
+                          <option value="16" >16 hrs</option>
+                          <option value="17" >17 hrs</option>
+                          <option value="18" >18 hrs</option>
+                          <option value="19" >19 hrs</option>
+                          <option value="20" >20 hrs</option>
+                          <option value="21" >21 hrs</option>
+                          <option value="22" >22 hrs</option>
+                          <option value="23" >23 hrs</option>
+                          <option value="24" >24 hrs</option>
+                          <option value="25" >25 hrs</option>
+                          <option value="26" >26 hrs</option>
+                          <option value="27" >27 hrs</option>
+                          <option value="28" >28 hrs</option>
+                          <option value="29" >29 hrs</option>
+                          <option value="30" >30 hrs</option>
+                          <option value="31" >31 hrs</option>
+                          <option value="32" >32 hrs</option>
+                          <option value="33" >33 hrs</option>
+                          <option value="34" >34 hrs</option>
+                          <option value="35" >35 hrs</option>
+                          <option value="36" >36 hrs</option>
+                          <option value="37" >37 hrs</option>
+                          <option value="38" >38 hrs</option>
+                          <option value="39" >39 hrs</option>
+                          <option value="40" >40 hrs</option>
+    
                         </select>
               </div>
               <div class="form-group col-sm-2">
@@ -762,6 +794,11 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
   <a href="https://coreui.io">CoreUI</a>
 </div>
 </footer>
+<div class="modal fade" id="alerta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-success" role="document">
+  <div class="modal-content" id="progress">
+    <div class="alert alert-danger" role="alert" id="dangerAlert">This is a danger alert—check it out!</div>  
+  </div> 
 <script>
   var proyectosSelec = [];
   var sueldoTotal = 0 ;
@@ -778,6 +815,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     var porcent = f.options[f.selectedIndex].value;
     var lenProy = idProy.split('-');
     var numVerf = lenProy[2];
+    var horasTotales = document.getElementById('horas').value;
 
     var verf = true;
     for(var i = 0;  i < proyectosSelec.length; i++){
@@ -792,12 +830,14 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     proyecto.id = idProy;
     proyecto.nombre = proy;
     proyecto.porcentaje = porcent;
-    proyecto.sueldo = sueldo * porcent / 100;
-    sueldoTotal = sueldoTotal + proyecto.sueldo;
-    suelAnt =  sueldo * porcent / 100;
+    proyecto.sueldo = parseInt(sueldo / 40 * porcent);
+    sueldoTotal = proyecto.sueldo + sueldoTotal;  
+    suelAnt =  parseInt((sueldo / 40) * porcent);
+    console.log('sueldo por dia::', sueldo / 40);
     console.log('sueldoTotal::', sueldoTotal, 'sueldo::', sueldo);
-
-    if ( verf == true && idProy != 0 && porcent != 0 && numVerf != 0 && sueldo >= sueldoTotal ) {  
+    
+    if ( verf == true && idProy != 0 && porcent != 0 && numVerf != 0 && sueldo >= sueldoTotal && horasTotales != '') { 
+    
     proyectosSelec.push(proyecto);
 
     var tr = document.createElement('tr');
@@ -813,7 +853,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     td4.appendChild(contenido4);
 
     var td3 = document.createElement('td');
-    var contenido3 = document.createTextNode(proyecto.porcentaje + '%');
+    var contenido3 = document.createTextNode(proyecto.porcentaje);
     td3.appendChild(contenido3);
     
     var td2 = document.createElement('td');
@@ -834,6 +874,23 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     tdSueldoTotal.innerHTML = sueldoTotal;
 
     }else{
+      if(horasTotales == '' ) {
+        console.log('Debes ingresar las horas semanales');
+        $("#alerta").modal();
+        $('#dangerAlert').html('Debes ingresar las horas semanales <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+      }else{
+        if( sueldo == '') {
+        $("#alerta").modal();
+        $('#dangerAlert').html('Debes ingresar el sueldo convenido <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+        }else{
+          if( sueldo < sueldoTotal ){
+            $("#alerta").modal();
+            $('#dangerAlert').html(' La cantidad de horas totales suman mas de 40 semanales, favor ingresa horas que den como total 40 semanales <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
+
+          }
+
+        }
+      }
       sueldoTotal = sueldoTotal - suelAnt;
     }
 
