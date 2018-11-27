@@ -448,7 +448,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
                         <tr>
                           <th>Código</th>
                           <th>Proyecto</th>
-                          <th>Porcentaje</th>
+                          <th>Horas semanales</th>
                           <th>Porcentaje sueldo</th>
                         </tr>
                       </thead>
@@ -815,7 +815,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     var porcent = f.options[f.selectedIndex].value;
     var lenProy = idProy.split('-');
     var numVerf = lenProy[2];
-    var horasTotales = document.getElementById('horas').value;
+    var horasTotales =parseInt(document.getElementById('horas').value);
 
     var verf = true;
     for(var i = 0;  i < proyectosSelec.length; i++){
@@ -830,10 +830,10 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     proyecto.id = idProy;
     proyecto.nombre = proy;
     proyecto.porcentaje = porcent;
-    proyecto.sueldo = parseInt(sueldo / 40 * porcent);
+    proyecto.sueldo = parseInt((sueldo / horasTotales * 1) * porcent);
     sueldoTotal = proyecto.sueldo + sueldoTotal;  
-    suelAnt =  parseInt((sueldo / 40) * porcent);
-    console.log('sueldo por dia::', sueldo / 40);
+    suelAnt =  parseInt((sueldo / horasTotales * 1) * porcent);
+    console.log('sueldo por dia::', sueldo / horasTotales);
     console.log('sueldoTotal::', sueldoTotal, 'sueldo::', sueldo);
     
     if ( verf == true && idProy != 0 && porcent != 0 && numVerf != 0 && sueldo >= sueldoTotal && horasTotales != '') { 
@@ -875,18 +875,37 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
 
     }else{
       if(horasTotales == '' ) {
-        console.log('Debes ingresar las horas semanales');
+        console.log('Debe ingresar las horas semanales');
         $("#alerta").modal();
-        $('#dangerAlert').html('Debes ingresar las horas semanales <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+        $('#dangerAlert').html('Debe ingresar las horas semanales. <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
       }else{
         if( sueldo == '') {
         $("#alerta").modal();
-        $('#dangerAlert').html('Debes ingresar el sueldo convenido <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+        $('#dangerAlert').html('Debe ingresar el sueldo convenido. <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
         }else{
           if( sueldo < sueldoTotal ){
             $("#alerta").modal();
-            $('#dangerAlert').html(' La cantidad de horas totales suman mas de 40 semanales, favor ingresa horas que den como total 40 semanales <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
+            $('#dangerAlert').html(' La cantidad de horas totales suman mas de '+ horasTotales +' semanales, favor ingresa horas que den como total '+ horasTotales +' semanales. <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
 
+          }else{
+            console.log('idProy::', idProy);
+            if( idProy == '0') {
+              $("#alerta").modal();
+              $('#dangerAlert').html('Debe seleccionar un proyecto. <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
+
+            }else{
+              if(porcent == '0') {
+                $("#alerta").modal();
+                $('#dangerAlert').html('Debe seleccionar horas para el proyecto. <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
+
+              }else{
+                if( verf == false) {
+                  $("#alerta").modal();
+                  $('#dangerAlert').html('El proyecto seleccionado ya esta agregado, seleccione otro o rectifique sus horas.<button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');    
+                }
+
+              }
+            }
           }
 
         }
