@@ -119,7 +119,7 @@
 		<!-- /.modal-dialog-->
 
 		<div class="modal fade" id="carga" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-success" role="document">
+            <div class="modal-dialog modal-success" role="document" id="modalContenedor">
 			      <div class="modal-content" id="progress">
 			      <div class="progress" >
                   <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
@@ -138,6 +138,7 @@
                   <p id="respuesta"></p>
                 </div>	
 </div>
+
               <!-- /.modal-content-->
             </div>
             <!-- /.modal-dialog-->
@@ -157,22 +158,55 @@
 	var descrip = document.getElementById('descripcion').value;
     
 	if(nombre != '' && cod1 != '' && cod2 != '' && cod3 != '' && fechaI != '' && fechaF != ''){
-		console.log('datos llenos');
 		$("#carga").modal({backdrop: 'static', keyboard: false});
 		var parametros = {codigo:cod1+'-'+cod2+'-'+cod3, nombre:name, fecha1: fechaI, fecha2: fechaF, descripcion: descrip};
+		
 		$.ajax({
 			data: parametros,
 			url: 'base/creador.php',
 			type:'post',
 			success:function(response){
+				console.log('respose::', response);
+				if(response == 1){
+				console.log('entro', response);
+				$('.modal-title').html('Error');
+				$('#modalContenedor').removeClass('modal-success').addClass('modal-danger');
 				$('#exito').css('display', 'block');
 				$('#progress').css('display', 'none');
-				$('#respuesta').html(response);
+				$('#respuesta').html('Ocurrio un error al crear el proyecto, intentelo nuevamente');
+				}
+				if(response == 2){
+				console.log('entro', response);
+				$('.modal-title').html('Error');
+				$('#modalContenedor').removeClass('modal-success').addClass('modal-danger');
+				$('#exito').css('display', 'block');
+				$('#progress').css('display', 'none');
+				$('#respuesta').html('El código del proyecto ya existe, favor digite uno nuevo');
+				}
+				if(response == 3){
+				console.log('entro', response);
+				$('.modal-title').html('Error');
+				$('#modalContenedor').removeClass('modal-success').addClass('modal-danger');
+				$('#exito').css('display', 'block');
+				$('#progress').css('display', 'none');
+				$('#respuesta').html('La fecha de comienzo del proyecto debe ser anterior a la fecha de finalización');
+				}
+				if(response == 0){
+				console.log('entro', response);
+				$('.modal-title').html('Exito');
+				$('#modalContenedor').removeClass('modal-danger').addClass('modal-success');
+				$('#exito').css('display', 'block');
+				$('#progress').css('display', 'none');
+				$('#respuesta').html('Proyecto creado exitosamente');
+				}
+							
 			},
 			error:function(response,errorThrown){
-				$('#exito').css('display', 'block');
+				$('#modalContenedor').removeClass('modal-success').addClass('modal-error');
+				$('#exito').css('display', 'none');
+				$('#error').css('display', 'block');
 				$('#progress').css('display', 'none');
-				$('#respuesta').html(response);
+				$('#respuestaError').html(response);
 			}
 	});
 		
