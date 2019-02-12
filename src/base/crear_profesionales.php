@@ -178,6 +178,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
   var proyectosSelec = [];
   var sueldoTotal = 0 ;
   var suelAnt = 0;
+  var numProy = 0;
   var ant='bodyTable'
   function seleccionarProyecto(){
 
@@ -207,51 +208,91 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
     proyecto.sueldo = sueldo * porcent / 100;
     sueldoTotal = sueldoTotal + proyecto.sueldo;
     suelAnt =  sueldo * porcent / 100;
-    console.log('sueldoTotal::', sueldoTotal, 'sueldo::', sueldo);
 
-    if ( verf == true && idProy != 0 && porcent != 0 && numVerf != 0 && sueldo >= sueldoTotal ) {  
-    proyectosSelec.push(proyecto);
+    if(sueldo != '' || sueldo != 0){
+      if(idProy != 0){
+        if(porcent != 0){
+          if(numVerf != 0){
+            if ( verf == true  && sueldo >= sueldoTotal ) {  
+                    proyectosSelec.push(proyecto);
+                    
+                    $('#sueldo').prop('disabled', true);
 
-    var tr = document.createElement('tr');
-    tr.id = 'tr' + idProy;
+                    var tr = document.createElement('tr');
+                    tr.id = 'tr' + idProy;
 
-    var contenedor = document.getElementById(ant); 
-    contenedor.appendChild(tr);
+                    var contenedor = document.getElementById(ant); 
+                    contenedor.appendChild(tr);
 
-    console.log('proyectos', proyectosSelec);
+                    console.log('proyectos', proyectosSelec);
 
-    var td4 = document.createElement('td');
-    var contenido4 = document.createTextNode(proyecto.sueldo);
-    td4.appendChild(contenido4);
+                    var td6 = document.createElement('td');
 
-    var td3 = document.createElement('td');
-    var contenido3 = document.createTextNode(proyecto.porcentaje + '%');
-    td3.appendChild(contenido3);
-    
-    var td2 = document.createElement('td');
-    var contenido2 = document.createTextNode(proyecto.nombre);
-    td2.appendChild(contenido2);
+                    // var button = document.createElement('button');
+                    // button.id = 'botonx' + numProy;
+                    // $('#botonx' + numProy).on('click', function(){
+                    //   console.log('hola');
+                    // });
+                    // button.onClick = function(){
+                    //   console.log('hola');
+                    // }
+                    trIdProy = "'tr"+ idProy + "'";
+                    td6.innerHTML='<button onClick="borrarProyecto(' + numProy + ',' + trIdProy+ ',' + proyecto.sueldo +' )" type="button" class="btn btn-danger">eliminar</button>';
 
-    var td1 = document.createElement('td');
-    var contenido1 = document.createTextNode(proyecto.id);
-    td1.appendChild(contenido1);
-    
+                    var td4 = document.createElement('td');
+                    var contenido4 = document.createTextNode(proyecto.sueldo);
+                    td4.appendChild(contenido4);
 
-    var trContenedor = document.getElementById('tr'+ idProy);
-    var contenido5 = document.createTextNode(sueldoTotal);
-    trContenedor.appendChild(td1);
-    trContenedor.appendChild(td2);
-    trContenedor.appendChild(td3);
-    trContenedor.appendChild(td4);
-    tdSueldoTotal.innerHTML = sueldoTotal;
+                    var td3 = document.createElement('td');
+                    var contenido3 = document.createTextNode(proyecto.porcentaje + '%');
+                    td3.appendChild(contenido3);
+                    
+                    var td2 = document.createElement('td');
+                    var contenido2 = document.createTextNode(proyecto.nombre);
+                    td2.appendChild(contenido2);
+
+                    var td1 = document.createElement('td');
+                    var contenido1 = document.createTextNode(proyecto.id);
+                    td1.appendChild(contenido1);
+                    
+
+                    var trContenedor = document.getElementById('tr'+ idProy);
+                    var contenido5 = document.createTextNode(sueldoTotal);
+                    trContenedor.appendChild(td1);
+                    trContenedor.appendChild(td2);
+                    trContenedor.appendChild(td3);
+                    trContenedor.appendChild(td4);
+                    trContenedor.appendChild(td6);
+                    tdSueldoTotal.innerHTML = sueldoTotal;
+                    numProy++
+                }else{
+                  sueldoTotal = sueldoTotal - suelAnt;
+                }
+
+          }else{
+            console.log('debe seleccionar un codigo de proyecto valido, ejemplo: 100-00-1');
+          }
+        }else{
+          console.log('debe seleccionar un porcentaje');
+        }
+
+      }else{
+        console.log('debe seleccionar un proyecto');
+      }
 
     }else{
-      sueldoTotal = sueldoTotal - suelAnt;
+      console.log('debe ingresar el sueldo');
     }
+  }
 
+  function borrarProyecto(ind, idProy, sueldo){
 
-    
-
+    proyectosSelec.splice(ind,1);
+    console.log('proyectosSelec', proyectosSelec);
+    sueldoTotal = sueldoTotal - sueldo * 1;
+    $('#' + idProy).remove();
+    $('#SueldoTotal').text(sueldoTotal);
+    numProy--;
 
   }
 </script>
