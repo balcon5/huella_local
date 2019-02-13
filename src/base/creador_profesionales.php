@@ -17,7 +17,8 @@ $fechaNacimiento = date('Y-m-d',strtotime(str_replace('/', '-', $_REQUEST['fecha
 
 $feachaInComp=str_replace('-', '',$fechaIngreso);
 $feachaNacComp=str_replace('-', '',$fechaNacimiento);
-
+$id=1;
+$idProyecto =1;
 
         $sql = "INSERT INTO profesionales "."(nombres, apellidos, fecha_nac, fecha_ing, sueldo_bruto, sueldo_liquido, profesion, area) "."VALUES "."('$nombre','$apellidos','$feachaNacComp','$feachaInComp','$sueldoBruto','$sueldoLiquido','$profesion','$area')";
         $retval = mysqli_query($link, $sql);
@@ -27,29 +28,30 @@ $feachaNacComp=str_replace('-', '',$fechaNacimiento);
          }else{
             $query = "SELECT max(id) FROM profesionales ";
             $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error());
-            $id=0;
 
             while($res=mysqli_fetch_assoc($result)){
-            $id=$res.id;
+            $id=$res['max(id)'];
             }
             $fun=true;
             foreach($proyectos as $idProy ){
-                $idProyecto ='';
                 $idP=$idProy['id'];
                 $por=$idProy['porcentaje'];
-                $query1 = "SELECT * FROM proyectos WHERE codigo=$idP";
+                $query1 = "SELECT * FROM proyectos WHERE codigo='$idP'";
                 $result1 = mysqli_query($link,$query1) or die('Consulta fallida: ' . mysqli_error());
                 while($res1=mysqli_fetch_assoc($result1)){
-                    $idProyecto=$res1.id;
+                    $idProyecto=$res1['id'];
+                    
                 }
-
+                
                 $sql1 = "INSERT INTO proy_prof "."(proy, prof, porc) "."VALUES "."('$idProyecto','$id','$por')";
-                $retval1 = mysqli_query($link, $sql1);
-                if($retval1){
-                    $fun=false
-                }
+                    $retval1 = mysqli_query($link, $sql1);
+                    if($retval1){
+                        $fun=false;
+                    }
+
+                
             }
-            if($fun){
+            if(!$fun){
                 echo 0;
             }else{
                 echo 2;

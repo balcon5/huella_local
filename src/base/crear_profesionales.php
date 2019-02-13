@@ -403,6 +403,7 @@ $result = mysqli_query($link,$query) or die('Consulta fallida: ' . mysqli_error(
 });
 
 function crearProfesional(){
+  $("#carga").modal({backdrop: 'static', keyboard: false});
   var name = document.getElementById('nombre').value;
   var apellidos = document.getElementById('apellidos').value;
   var fechaN = document.getElementById('date').value;
